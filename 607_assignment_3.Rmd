@@ -1,0 +1,116 @@
+---
+title: "607_assignment_3"
+output: html_document
+date: "2023-02-09"
+---
+
+```{r}
+library(tidyverse)
+library(dbplyr)
+library(stringr)
+library(stringi)
+
+```
+
+## Exercise 1
+Using the 173 majors listed in fivethirtyeight.com’s College Majors dataset, [link](https://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/) provide code that identifies the majors that contain either "DATA" or "STATISTICS"
+
+```{r}
+##read csv and see the header
+readfile <- data.frame(read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/majors-list.csv", header = TRUE))
+
+head(readfile)
+
+## search for majors contains DATA or STATISTICS
+data_stat_df <-grep("DATA|STATISTICS", readfile$Major, value = TRUE)
+
+head(data_stat_df)
+
+```
+
+## Exercise 2
+Write code that transforms the data below:
+[1] "bell pepper"  "bilberry"     "blackberry"   "blood orange"
+[5] "blueberry"    "cantaloupe"   "chili pepper" "cloudberry"  
+[9] "elderberry"   "lime"         "lychee"       "mulberry"    
+[13] "olive"        "salal berry"
+Into a format like this:
+c("bell pepper", "bilberry", "blackberry", "blood orange", "blueberry", "cantaloupe", "chili pepper", "cloudberry", "elderberry", "lime", "lychee", "mulberry", "olive", "salal berry")
+
+```{r}
+##input the data to a dataframe
+
+new_df <- {
+'
+[1] "bell pepper"  "bilberry"     "blackberry"   "blood orange"
+[5] "blueberry"    "cantaloupe"   "chili pepper" "cloudberry"  
+[9] "elderberry"   "lime"         "lychee"       "mulberry"    
+[13] "olive"        "salal berry"
+'
+}
+new_df
+##remove the unknown characters
+new_df<-str_remove_all(new_df,"\"")
+new_df<-str_remove_all(new_df,"\n")
+new_df
+
+##sort the string
+sort(new_df)
+
+new_list <-c(new_df)
+
+new_list
+```
+## Exercise 3
+Describe, in words, what these expressions will match:
+*(.)\1\1
+This expression returns value with characters repeated 3 times.
+```{r}
+test_word <- c("goddesssship", "juice", "skullllike", "skull", "hostesssship")
+str_subset(test_word, "(.)\\1\\1")
+
+```
+
+*(.)(.)\\2\\1
+This expression returns value with pairs characters.
+```{r}
+test_word2 <- c("abba", "music", "fruits", "candy", "choco")
+str_subset(test_word2, "(.)(.)\\2\\1")
+```
+*(..)\1
+This expression returns value with any characters repeated.
+```{r}
+test_word3 <-c("banana","sausage", "music", "silver", "muscle")
+str_subset(test_word3, "(..)\\1")
+```
+*(.).\\1.\\1
+This expression returns characters that have other characters in between 2 original characters.
+```{r}
+test_word4 <- c("banana", "Alabama", "sushi", "sugar", "bowl")
+str_subset(test_word4, "(.).\\1.\\1")
+```
+*(.)(.)(.).*\\3\\2\\1
+This expression returns characters that have others characters in between 2 character sets in reversed order.
+```{r}
+test_word5 <- c("xyz1zyx", "doggod", "sworddrows", "music", "mussle")
+str_subset(test_word5, "(.)(.)(.).*\\3\\2\\1")
+```
+
+## Exercise 4
+Construct regular expressions to match words that:
+Start and end with the same character.
+
+```{r}
+test_word6 <- c("dad", "music", "razor", "banana", "burritos")
+str_subset(test_word6, "^(.)((.*\\1$)|\\1?$)")
+```
+Contain a repeated pair of letters (e.g. "church" contains "ch" repeated twice.)
+```{r}
+test_word7 <- c("church", "monster", "banana", "jujube", "star")
+str_subset(test_word7, "([A-Za-z][A-Za-z]).*\\1")
+```
+Contain one letter repeated in at least three places (e.g. "eleven" contains three "e"s.)
+```{r}
+test_word8 <- c("eleven", "balloon", "expression", "repeat", "banana")
+str_subset(test_word8, "([a-z]).*\\1.*\\1")
+```
